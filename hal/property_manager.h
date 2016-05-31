@@ -26,7 +26,9 @@
 #include <inttypes.h>
 #include <string.h>
 
-#define UART_DEV "/dev/ttyS1"
+#define UART_SYNTH "/dev/ttycrimson-time"
+#define UART_TX "/dev/ttycrimson-tx"
+#define UART_RX "/dev/ttycrimson-rx"
 
 int init_property(uint8_t options);
 void check_property_inotifies(void);
