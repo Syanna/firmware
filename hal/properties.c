@@ -3326,13 +3326,13 @@ static int hdlr_rx_d_dsp_gain (const char* data, char* ret) {
 
 static int hdlr_rx_d_dsp_rate (const char* data, char* ret) {
 	uint32_t old_val;
-   uint16_t base_factor;
-   double base_err;
+   	uint16_t base_factor;
+   	double base_err;
 	double rate;
 	sscanf(data, "%lf", &rate);
 
 	// get the error for base rate
-   ease_factor = get_optimal_sr_factor(rate, BASE_SAMPLE_RATE, &base_err);
+   	base_factor = get_optimal_sr_factor(rate, BASE_SAMPLE_RATE, &base_err);
 
 	// set the appropriate sample rate
 	memset(ret, 0, MAX_PROP_LEN);
@@ -3572,11 +3572,11 @@ static int hdlr_time_source_pll (const char* data, char* ret) {
 
 //  
 static int hdlr_time_source_ref_dac (const char* data, char* ret) {
-	if((strtol(data) < 0) | (strtol(data) >= 4095){
+	if((strtol(data, NULL, 0) < 0) | (strtol(data, NULL, 0) >= 4095)){
 		return RETURN_ERROR_PARAM;
 	} 	
 	strcpy(buf, "fwd -b 2 -m 'clk -j'\r");
-	send_uart_comm(uart_fd, (uint8_t*)buf, strlen(buf));
+	send_uart_comm(uart_synth_fd, (uint8_t*)buf, strlen(buf));
 	return RETURN_SUCCESS;
 }
 
