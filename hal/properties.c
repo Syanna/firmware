@@ -2896,7 +2896,7 @@ static int hdlr_rx_d_dsp_rate (const char* data, char* ret) {
 	sscanf(data, "%lf", &rate);
 
 	// get the error for base and adj rates
-   base_factor = get_optimal_sr_factor(rate, BASE_SAMPLE_RATE, &base_err);
+   ease_factor = get_optimal_sr_factor(rate, BASE_SAMPLE_RATE, &base_err);
    resamp_factor = get_optimal_sr_factor(rate, RESAMP_SAMPLE_RATE, &resamp_err);
 
 	// set the appropriate sample rate depending on which one is closer
@@ -3117,6 +3117,16 @@ static int hdlr_time_source_ref (const char* data, char* ret) {
 	} else if (strcmp(data, "internal") == 0) {
 		strcpy(buf, "fwd -b 2 -m 'clk -t 0'\r");
 	}
+	send_uart_comm(uart_fd, (uint8_t*)buf, strlen(buf));
+	return RETURN_SUCCESS;
+}
+
+//  
+static int hdlr_time_source_ref_dac (const char* data, char* ret) {
+	if((strtol(data) < 0) | (strtol(data) >= 4095){
+		return RETURN_ERROR_PARAM;
+	} 	
+	strcpy(buf, "fwd -b 2 -m 'clk -j'\r");
 	send_uart_comm(uart_fd, (uint8_t*)buf, strlen(buf));
 	return RETURN_SUCCESS;
 }
@@ -3629,6 +3639,7 @@ static prop_t property_table[] = {
 	{"time/source/vco", hdlr_time_source_vco, RW, "internal"},
 	{"time/source/sync", hdlr_time_source_sync, RW, "internal"},
 	{"time/source/ref", hdlr_time_source_ref, RW, "internal"},
+	{"time/source/ref_dac", hdlr_time_source_ref_dac, RW, "1604"},
 	{"time/board/dump", hdlr_time_board_dump, WO, "0"},
 	{"time/board/test", hdlr_time_board_test, WO, "0"},
 	{"time/board/temp", hdlr_time_board_temp, RW, "20"},
