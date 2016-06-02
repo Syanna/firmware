@@ -3572,10 +3572,13 @@ static int hdlr_time_source_pll (const char* data, char* ret) {
 
 //  
 static int hdlr_time_source_ref_dac (const char* data, char* ret) {
-	if((strtol(data, NULL, 0) < 0) | (strtol(data, NULL, 0) >= 4095)){
+	uint16_t value = strtol(data, NULL, 0);	
+	if(value < 0 || value > 4095){
 		return RETURN_ERROR_PARAM;
 	} 	
-	strcpy(buf, "fwd -b 2 -m 'clk -j'\r");
+	strcpy(buf, "clk -d "); //change this to n later
+	sprintf(buf + strlen(buf), "%i", value);
+	strcat(buf, "\r"); 
 	send_uart_comm(uart_synth_fd, (uint8_t*)buf, strlen(buf));
 	return RETURN_SUCCESS;
 }
