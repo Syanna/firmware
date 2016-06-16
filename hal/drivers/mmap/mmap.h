@@ -20,6 +20,8 @@
 
 #define PAGE_SIZE	( getpagesize() )
 #define PAGE_MASK	( getpagesize() - 1 )
+#define REG_DISTANCE 	16 //This needs to be changed depending on the distance between addrs in the reg map
+
 
 #include <stdio.h>
 #include <unistd.h>
@@ -33,7 +35,7 @@
 #include "common.h"
 
 int burst_read_hps_addr(uint32_t addr, uint32_t* data, size_t bytes_to_read);
-int busrt_write_hps_addr(uint32_t addr, uint32_t* data, size_t bytes_to_write);
+int burst_write_hps_addr(uint32_t addr, uint32_t* data, size_t bytes_to_write);
 int read_hps_addr(uint32_t addr, uint32_t* data);
 int write_hps_addr(uint32_t addr, uint32_t data);
 int read_hps_reg(const char* reg, uint32_t* data);

@@ -92,7 +92,7 @@ static int reg_write(uint32_t addr, uint32_t* data, uint32_t bytes_to_write) {
 
 	// Does the actual writing
 	for (i = 0; i < bytes_to_write; i++) {
-		alt_write_word(virtual_base + ((addr + i) & (span -1)), data[i]);
+		alt_write_word(virtual_base + ((addr + i*REG_DISTANCE) & (span -1)), data[i]);
 	}
 
 	if( munmap( virtual_base, span ) != 0 ) {
@@ -111,7 +111,7 @@ int burst_read_hps_addr(uint32_t addr, uint32_t* data, size_t bytes_to_read) {
 	return reg_read( addr, data, bytes_to_read );
 }
 
-int busrt_write_hps_addr(uint32_t addr, uint32_t* data, size_t bytes_to_write) {
+int burst_write_hps_addr(uint32_t addr, uint32_t* data, size_t bytes_to_write) {
 	if (!data) return RETURN_ERROR_PARAM;
 	return reg_write( addr, data, bytes_to_write );
 }

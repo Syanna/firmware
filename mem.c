@@ -13,6 +13,7 @@
 int main(int argc, char *argv[]) {
 	char* reg;			// register
 	uint32_t addr, value;		// r/w address, and value if applicable
+	uint32_t value_burst[512] = {0};// w for when we want to do multiple ones
 	int verbose = 0;		// printing verbosity, default, not verbose
 	int length = 4;
 	uint32_t rval;			// value that is read
@@ -22,13 +23,28 @@ int main(int argc, char *argv[]) {
 	// if command is memory write
 	if ((argc == 5 || argc == 4) && strcmp(argv[1], ARG_MEM_WRITE) == 0) {
 		sscanf(argv[2], "%x", &addr);
-		sscanf(argv[3], "%x", &value);
+		
+		length = strlen(argv[3]) /2; //Each char represents a hex value of 4 bits, and we need number of bytes
+		if((length == 0) || ((length % 4) != 0) || (length > 1024)){
+			printf("Must write 32 bits at a time.");
+			return 1;
+		}
+		
+		int count;
+		char *pos = argv[3];
+		for(count = 0; count < length/4; count++){
+			char buf[10] = {0};
+			sprintf(buf, "%c%c%c%c%c%c%c%c", pos[0], pos[1], pos[2], pos[3], pos[4], pos[5], pos[6], pos[7]);
+			pos += 8*sizeof(char);
+			value_burst[count] = strtoul(buf, NULL, 16);
+		}
 
 		if (argc == 5) {
 			sscanf(argv[4], "%x", &mask);
-			write_hps_addr_mask(addr, value, mask);
+			//write_hps_addr_mask(addr, value, mask);
 		} else {
-			write_hps_addr(addr, value);
+			//write_hps_addr(addr, value);
+			burst_write_hps_addr(addr, value_burst, length/4);
 		}
 
 	// if command is memory read
