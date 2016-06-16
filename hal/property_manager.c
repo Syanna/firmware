@@ -286,7 +286,7 @@ int save_properties(const char* file) {
 }
 
 // Load properties from file
-int load_properties(const char* file) {
+int load_properties(const char* file, uint8_t dev_sel, uint8_t chan_sel) {
 	PRINT( DEBUG,"loading properties from %s!\n", file);
 
 	// open the file for reading
@@ -295,22 +295,51 @@ int load_properties(const char* file) {
 
 	// temp buffer to store the property values
 	char prop [MAX_PROP_LEN] = {0};
+	char prop_temp [MAX_PROP_LEN] = {0};
 
-	// loop through all properties, if there are incompatibilities, error out
-	size_t i;
-	for (i = 0; i < get_num_prop(); i++) {
-		// read from file and update the property table
-		if (fscanf(fin, "%s", prop) == EOF) {
-			break;
-		}
+	char *pch = NULL;
+	char *dev = NULL;
+	char *chan = NULL;
+
+	// read from file and update the property table
+	while(fscanf(fin, "%s", prop) != EOF){
 
 		// if property exceeded the MAX_PROP_LEN
+		prop[MAX_PROP_LEN - 1] = 0;
 		prop[MAX_PROP_LEN - 1] = 0;
 
 		// divide up the property and value
 		char* prop_val = strchr(prop, ',');
 		*prop_val = 0;
 		prop_val++;
+
+		strncpy(prop_temp, prop, MAX_PROP_LEN -1);
+		//split to get the root ex. rx_a
+		pch = strtok(prop_temp, "/");
+		if(pch == NULL){
+			PRINT(ERROR, "Problem with entry in profile.cfg\n");
+			continue;
+		}
+
+		//split to get rx and a seperate
+		dev = strtok(pch, "_");
+		chan = strtok(NULL, "_");
+		if(dev == NULL){
+			PRINT(ERROR, "Problem with entry in profile.cfg\n");
+			continue;
+		}
+
+		PRINT(VERBOSE, "Prop: %s, Value: %s, dev: %s, chan: %s\n", prop, prop_val, dev, chan);
+		PRINT(VERBOSE, "dev_sel: %X, chan_sel: %X\n", dev_sel, chan_sel);
+		printf("Prop: %s, Value: %s, dev: %s, chan: %s\n", prop, prop_val, dev, chan);
+		printf("dev_sel: %X, chan_sel: %x\n", dev_sel, chan_sel);	
+
+		//if that property wasnt enabled to load, then skip it	
+		if(check_valid_property(dev, chan, dev_sel, chan_sel) == INVALID_LOAD_PROPERTY){
+			printf("Skip the property\n");
+			PRINT(VERBOSE, "Skip the property\n");
+			continue;	
+		}
 
 		// get pointer to current property
 		prop_t* cur_prop = get_prop_from_cmd(prop);
@@ -321,13 +350,70 @@ int load_properties(const char* file) {
 		strcpy(cur_prop -> def_val, prop_val);
 
 		// write the current property to device
-		init_prop_val(get_prop(i));
+		init_prop_val(cur_prop);
 	}
 
 	// close the file
 	fclose(fin);
 
 	return RETURN_SUCCESS;
+}
+
+int check_valid_property(const char *dev, const char *chan, uint8_t dev_sel, uint8_t chan_sel){
+
+	if((dev_sel & ALL_SEL) == ALL_SEL){
+		if((chan_sel & ALL_CHAN_SEL) == ALL_CHAN_SEL) return VALID_LOAD_PROPERTY;
+		else if(strcmp(chan, "a") == 0 && ((chan_sel & CHAN1_SEL) == CHAN1_SEL)) return VALID_LOAD_PROPERTY;
+		else if(strcmp(chan, "b") == 0 && ((chan_sel & CHAN2_SEL) == CHAN2_SEL)) return VALID_LOAD_PROPERTY;
+		else if(strcmp(chan, "c") == 0 && ((chan_sel & CHAN3_SEL) == CHAN3_SEL)) return VALID_LOAD_PROPERTY;
+		else if(strcmp(chan, "d") == 0 && ((chan_sel & CHAN4_SEL) == CHAN4_SEL)) return VALID_LOAD_PROPERTY;
+		else return INVALID_LOAD_PROPERTY;
+	} 
+	else if(strcmp(dev, "tx") == 0 && ((dev_sel & TX_SEL) == TX_SEL)){	
+		if(strcmp(chan, "a") == 0 && ((chan_sel & CHAN1_SEL) == CHAN1_SEL)){
+			return VALID_LOAD_PROPERTY;
+		}
+		else if(strcmp(chan, "b") == 0 && ((chan_sel & CHAN2_SEL) == CHAN2_SEL)){
+			return VALID_LOAD_PROPERTY;
+		}
+		else if(strcmp(chan, "c") == 0 && ((chan_sel & CHAN3_SEL) == CHAN3_SEL)){
+			return VALID_LOAD_PROPERTY;
+		}
+		else if(strcmp(chan, "d") == 0 && ((chan_sel & CHAN4_SEL) == CHAN4_SEL)){
+			return VALID_LOAD_PROPERTY;
+		}
+		else{
+			return INVALID_LOAD_PROPERTY;
+		}
+	}
+	else if(strcmp(dev, "rx") == 0 && ((dev_sel & RX_SEL) == RX_SEL)){
+		if(strcmp(chan, "a") == 0 && ((chan_sel & CHAN1_SEL) == CHAN1_SEL)){
+			return VALID_LOAD_PROPERTY;
+		}
+		else if(strcmp(chan, "b") == 0 && ((chan_sel & CHAN2_SEL) == CHAN2_SEL)){
+			return VALID_LOAD_PROPERTY;
+		}
+		else if(strcmp(chan, "c") == 0 && ((chan_sel & CHAN3_SEL) == CHAN3_SEL)){
+			return VALID_LOAD_PROPERTY;
+		}
+		else if(strcmp(chan, "d") == 0 && ((chan_sel & CHAN4_SEL) == CHAN4_SEL)){
+			return VALID_LOAD_PROPERTY;
+		}
+		else{
+			return INVALID_LOAD_PROPERTY;
+		}
+	}
+	else if(strcmp(dev, "time") == 0 && ((dev_sel & TIME_SEL) == TIME_SEL)){
+		return VALID_LOAD_PROPERTY;
+		
+	}
+	else if(strcmp(dev, "fpga") == 0 && ((dev_sel & FPGA_SEL) == FPGA_SEL)){
+		return VALID_LOAD_PROPERTY;
+	}
+	else{
+		return INVALID_LOAD_PROPERTY; 
+	}
+	return INVALID_LOAD_PROPERTY;
 }
 
 // Standard get property
@@ -396,6 +482,6 @@ int set_property(const char* prop, const char* data) {
 }
 
 // Pass the pointers for load/saving profiles flags
-void pass_profile_pntr_manager(uint8_t* load, uint8_t* save, char* load_path, char* save_path) {
-	pass_profile_pntr_prop(load, save, load_path, save_path);
+void pass_profile_pntr_manager(uint8_t* load, uint8_t* save, uint8_t *dev_sel, uint8_t *chan_sel, char* load_path, char* save_path) {
+	pass_profile_pntr_prop(load, save, dev_sel, chan_sel, load_path, save_path);
 }

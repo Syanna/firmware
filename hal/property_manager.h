@@ -34,12 +34,13 @@ int init_property(uint8_t options);
 void check_property_inotifies(void);
 void update_status_properties(void);
 int save_properties(const char* file);
-int load_properties(const char* file);
-void pass_profile_pntr_manager(uint8_t* load, uint8_t* save, char* load_path, char* save_path);
+int load_properties(const char* file, uint8_t dev_sel, uint8_t chan_sel);
+void pass_profile_pntr_manager(uint8_t* load, uint8_t* save, uint8_t *dev_sel, uint8_t *chan_sel, char* load_path, char* save_path);
 
 // Example property: "tx_a/rf/dac/freq"
 int get_property(const char* prop, char* data, size_t max_len);
 int set_property(const char* prop, const char* data);
 // API for the Crimson
+int check_valid_property(const char *dev, const char *chan, uint8_t dev_sel, uint8_t chan_sel);
 
 #endif

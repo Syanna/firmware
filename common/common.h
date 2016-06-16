@@ -56,6 +56,22 @@
 #define MAX_PROP_LEN	( 1024 )
 #define MAX_UART_LEN	( 8192 )
 
+//Used to select which properties we want to load in load_properties
+#define TX_SEL 				0x1
+#define RX_SEL				0x2
+#define TIME_SEL			0x4
+#define FPGA_SEL			0x8
+#define ALL_SEL				0x80
+
+#define CHAN1_SEL			0x1
+#define CHAN2_SEL			0x2
+#define CHAN3_SEL			0x4
+#define CHAN4_SEL			0x8
+#define ALL_CHAN_SEL			0x80
+
+#define INVALID_LOAD_PROPERTY 		0x0
+#define VALID_LOAD_PROPERTY		0x1
+
 // macro for string comparison
 #define EQUAL_STR(VAR, STR)		(strncmp(VAR, STR, strlen(STR)) == 0)
 

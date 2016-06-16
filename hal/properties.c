@@ -54,6 +54,8 @@ static int q_bias[] = {17, 17, 17, 17};
 // profile pointers
 uint8_t* _save_profile;
 uint8_t* _load_profile;
+uint8_t* _dev_sel;
+uint8_t* _chan_sel;
 char* _save_profile_path;
 char* _load_profile_path;
 
@@ -3888,6 +3890,8 @@ static int hdlr_save_config (const char* data, char* ret) {
 
 static int hdlr_load_config (const char* data, char* ret) {
 	*_load_profile = 1;
+	*_dev_sel = ALL_SEL;
+	*_chan_sel = ALL_CHAN_SEL; 
 	strcpy(_load_profile_path, data);
 	return RETURN_SUCCESS;
 }
@@ -4257,9 +4261,11 @@ char* get_root (prop_t* prop, char* root) {
 	return root;
 }
 
-void pass_profile_pntr_prop(uint8_t* load, uint8_t* save, char* load_path, char* save_path) {
+void pass_profile_pntr_prop(uint8_t* load, uint8_t* save, uint8_t *dev_sel, uint8_t *chan_sel, char* load_path, char* save_path) {
 	_load_profile = load;
 	_save_profile = save;
+	_dev_sel = dev_sel;
+	_chan_sel = chan_sel;
 	_load_profile_path = load_path;
 	_save_profile_path = save_path;
 }

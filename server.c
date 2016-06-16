@@ -55,6 +55,8 @@ static uint8_t timeout(uint32_t timeout) {
 // profile flags, read in this file, triggered in properties.c
 uint8_t load_profile = 0;
 uint8_t save_profile = 0;
+uint8_t dev_reset_en = 0;
+uint8_t chan_reset_en = 0;
 char load_profile_path[MAX_PROP_LEN];
 char save_profile_path[MAX_PROP_LEN];
 
@@ -101,11 +103,12 @@ int main(int argc, char *argv[]) {
 	uint8_t buffer[UDP_PAYLOAD_LEN];
 	uint16_t received_bytes = 0;
 
+	// pass the profile pointers down to properties.c
+	pass_profile_pntr_manager(&load_profile, &save_profile, &dev_reset_en, &chan_reset_en, load_profile_path, save_profile_path);
+	
 	// initialize the properties, which is implemented as a Linux file structure
 	init_property(options);
 
-	// pass the profile pointers down to properties.c
-	pass_profile_pntr_manager(&load_profile, &save_profile, load_profile_path, save_profile_path);
 
 	// let the user know the server is ready to receive commands
 	PRINT( INFO, "Crimson server is up\n");
@@ -168,8 +171,10 @@ int main(int argc, char *argv[]) {
 		}
 
 		if (load_profile) {
-			load_properties(load_profile_path);
+			load_properties(load_profile_path, dev_reset_en, chan_reset_en);
 			load_profile = 0;
+			dev_reset_en = 0;
+			chan_reset_en = 0;
 		}
 
 		// increment to service the other ports
