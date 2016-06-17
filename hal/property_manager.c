@@ -331,8 +331,6 @@ int load_properties(const char* file, uint8_t dev_sel, uint8_t chan_sel) {
 
 		PRINT(VERBOSE, "Prop: %s, Value: %s, dev: %s, chan: %s\n", prop, prop_val, dev, chan);
 		PRINT(VERBOSE, "dev_sel: %X, chan_sel: %X\n", dev_sel, chan_sel);
-		printf("Prop: %s, Value: %s, dev: %s, chan: %s\n", prop, prop_val, dev, chan);
-		printf("dev_sel: %X, chan_sel: %x\n", dev_sel, chan_sel);	
 
 		//if that property wasnt enabled to load, then skip it	
 		if(check_valid_property(dev, chan, dev_sel, chan_sel) == INVALID_LOAD_PROPERTY){

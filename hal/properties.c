@@ -3884,7 +3884,7 @@ static int hdlr_fpga_link_net_ip_addr (const char* data, char* ret) {
 
 static int hdlr_save_config (const char* data, char* ret) {
 	*_save_profile = 1;
-	strcpy(_save_profile_path, data);
+	strncpy(_save_profile_path, data, MAX_PROP_LEN-1);
 	return RETURN_SUCCESS;
 }
 
@@ -3892,7 +3892,7 @@ static int hdlr_load_config (const char* data, char* ret) {
 	*_load_profile = 1;
 	*_dev_sel = ALL_SEL;
 	*_chan_sel = ALL_CHAN_SEL; 
-	strcpy(_load_profile_path, data);
+	strncpy(_load_profile_path, data, MAX_PROP_LEN-1);
 	return RETURN_SUCCESS;
 }
 

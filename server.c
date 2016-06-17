@@ -53,12 +53,12 @@ static uint8_t timeout(uint32_t timeout) {
 */
 
 // profile flags, read in this file, triggered in properties.c
-uint8_t load_profile = 0;
+uint8_t load_profile = 1;
 uint8_t save_profile = 0;
-uint8_t dev_reset_en = 0;
-uint8_t chan_reset_en = 0;
-char load_profile_path[MAX_PROP_LEN];
-char save_profile_path[MAX_PROP_LEN];
+uint8_t dev_reset_en = ALL_SEL;
+uint8_t chan_reset_en = ALL_CHAN_SEL;
+char load_profile_path[MAX_PROP_LEN] = "/home/root/profile.cfg";
+char save_profile_path[MAX_PROP_LEN]; 
 
 // execution options
 uint8_t options = 0;
