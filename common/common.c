@@ -17,6 +17,31 @@
 
 #include "common.h"
 
+
+struct _errordesc {
+    int code;
+    char *message;
+} error_codes[] = {
+    { R_SUCCESS,			"R_SUCCESS" },
+    { R_ERROR,				"R_ERROR"},
+    { R_ERROR_PARAM,			"R_ERROR_PARAM"},
+    { R_ERROR_COMM_INIT,		"R_ERROR_COMM_INIT"},
+    { R_ERROR_COMM_NO_DATA,		"R_ERROR_COMM_NO_DATA"},
+    { R_ERROR_COMM_BUS,			"R_ERROR_COMM_BUS"},
+    { R_ERROR_COMM_MMAP,		"R_ERROR_COMM_MMAP"},
+    { R_ERROR_INOTIFY,			"R_ERROR_INOTIFY"},
+    { R_ERROR_GET_PROP,			"R_ERROR_GET_PROP"},
+    { R_ERROR_SET_PROP,			"R_ERROR_SET_PROP"},
+    { R_ERROR_UART_TIMEOUT,		"R_ERROR_UART_TIMEOUT"},
+    { R_ERROR_CMD_CORRUPT,		"R_ERROR_CMD_CORRUPT"},
+    { R_ERROR_INVALID_REGISTER,		"R_ERROR_INCALID_REGISTER"},
+    { R_ERROR_ADDR_OUT_OF_RANGE,	"R_ERROR_ADDR_OUT_OF_RANGE"},
+    { R_ERROR_INSUFFICIENT_RESOURCES,	"R_ERROR_INSUFFICIENT_RESOURCES"},
+    { R_ERROR_UART_FLUSH,		"R_ERROR_UART_FLUSH"},
+    {0, 0}
+};
+
+
 static FILE* fout = NULL;
 static FILE* dout = NULL;
 

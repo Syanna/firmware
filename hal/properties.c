@@ -4646,6 +4646,7 @@ void sync_channels(uint8_t chan_mask) {
 	sprintf(str_chan_mask + strlen(str_chan_mask), "%" PRIu8 "", 15);
 	//Put FPGA JESD core in reset
 	write_hps_reg( "res_rw7",0x80000000);
+	write_hps_reg( "res_rw7",0);
 	//usleep(300000); // Some wait time for the reset to be ready
 	/* Bring the ADCs & DACs into 'demo' mode for JESD */
 
@@ -4666,16 +4667,15 @@ void sync_channels(uint8_t chan_mask) {
 	strcpy(buf, "board -c ");
 	strcat(buf, str_chan_mask);
 	strcat(buf, " -s 1\r");
-	send_uart_comm(uart_rx_fd, (uint8_t*)buf, strlen(buf)); read_uart( uart_rx_fd );
+	send_uart_comm(uart_tx_fd, (uint8_t*)buf, strlen(buf)); read_uart( uart_tx_fd );
 	strcpy(buf, "board -c ");
 	strcat(buf, str_chan_mask);
 	strcat(buf, " -s 1\r");
-	send_uart_comm(uart_tx_fd, (uint8_t*)buf, strlen(buf)); read_uart( uart_tx_fd );
-
+	send_uart_comm(uart_rx_fd, (uint8_t*)buf, strlen(buf)); read_uart( uart_rx_fd );
+	
 	/* Trigger a SYSREF pulse */
 	//JESD core out of reset
-	write_hps_reg( "res_rw7",0);
-	usleep(100000); // Some wait time for MCUs to be ready
+	usleep(1000); // Some wait time for MCUs to be ready
 	strcpy(buf, "clk -y\r");
 	send_uart_comm(uart_synth_fd, (uint8_t*)buf, strlen(buf)); read_uart( uart_synth_fd );
 

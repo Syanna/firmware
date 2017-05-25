@@ -26,7 +26,26 @@
 #include <time.h>
 
 // Define used for debugging
-//#define DEBUG
+
+typedef enum {
+    R_SUCCESS,
+    R_ERROR,
+    R_ERROR_PARAM,
+    R_ERROR_COMM_INIT,
+    R_ERROR_COMM_NO_DATA,
+    R_ERROR_COMM_BUS,
+    R_ERROR_COMM_MMAP,
+    R_ERROR_INOTIFY,
+    R_ERROR_GET_PROP,
+    R_ERROR_SET_PROP,
+    R_ERROR_UART_TIMEOUT,
+    R_ERROR_CMD_CORRUPT,
+    R_ERROR_INVALID_REGISTER,
+    R_ERROR_ADDR_OUT_OF_RANGE,
+    R_ERROR_INSUFFICIENT_RESOURCES,
+    R_ERROR_UART_FLUSH
+}error_t;
+
 
 // Global return values
 #define RETURN_SUCCESS			0
